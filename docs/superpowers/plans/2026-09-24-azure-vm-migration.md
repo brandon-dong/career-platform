@@ -23,7 +23,7 @@ Verify     the site answers on the VM and shows my data
 
 ## Corrections to the spec (read first)
 
-1. **VM IP.** The request gave the public IP as `157.242.208.150`. That is the **laptop's** public IPv4 address. The VM's public IP is **`20.80.7.163`**. This plan connects to `20.80.7.163` and uses `157.242.208.150` only as the allowed source in the firewall rule.
+1. **VM IP.** The request gave the laptop's public IPv4 address as the VM's IP. This plan connects to the VM's public IP (`<VM_IP>`) and uses the laptop's IP (`<LAPTOP_IP>`) only as the allowed source in the firewall rule.
 2. **No lock file exists yet.** The repo has `requirements.txt` but no `pyproject.toml` or `uv.lock`, so `uv sync` has nothing to install from. Python step Py2 creates both on the laptop and pushes them to GitHub.
 3. **The laptop database is empty.** `data/career_platform.db` is 0 bytes and the code never calls `create_all`. As things stand, the site would load with the "fallback mode" banner, and the Verify section would fail. Data step D1 is a hard gate: don't continue until it passes.
 4. **Port 22 is closed.** The VM was created with no public inbound ports. Server step S1 opens 22 to the laptop's IP only.
@@ -31,9 +31,9 @@ Verify     the site answers on the VM and shows my data
 ## Global Constraints
 
 - Resource group: `rg-career-platform`. VM: `vm-career-platform`. Region: North Central US. Network security group (NSG): `vm-career-platformNSG`.
-- VM public IP: `20.80.7.163`. Laptop public IP: `157.242.208.150`.
+- VM public IP: `<VM_IP>` (Portal: VM → Overview → Public IP address). Laptop public IP: `<LAPTOP_IP>` (`curl -4 -s https://api.ipify.org`). Real values are kept out of this public file.
 - SSH user: `azureuser`. SSH key: `~/.ssh/isba4775_azure`. Always use both. Never use password login.
-- Inbound rules: TCP 22 from `157.242.208.150/32` only. Don't open 8000, 80 or 443 in this plan.
+- Inbound rules: TCP 22 from `<LAPTOP_IP>/32` only. Don't open 8000, 80 or 443 in this plan.
 - App directory on the VM: `/home/azureuser/career-platform`. Database: `/home/azureuser/career-platform/data/career_platform.db`.
 - Python 3.12 (`requires-python >=3.12`), matching the laptop (3.12.10) and Ubuntu 24.04 (3.12.x).
 - The VM shuts down automatically at 7:00 PM Pacific. After that it is deallocated, and uvicorn isn't running.
@@ -60,7 +60,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
     ```powershell
     az network nsg rule create -g rg-career-platform --nsg-name vm-career-platformNSG `
       -n AllowSSHFromLaptop --priority 1000 --direction Inbound --access Allow `
-      --protocol Tcp --source-address-prefixes 157.242.208.150/32 --destination-port-ranges 22
+      --protocol Tcp --source-address-prefixes <LAPTOP_IP>/32 --destination-port-ranges 22
     ```
   - **Why:** The VM has no inbound ports open, so SSH and `scp` can't reach it. Limiting the rule to `/32` means only this laptop's current IP can even try to connect.
   - **Check:**
@@ -68,7 +68,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
     az network nsg rule list -g rg-career-platform --nsg-name vm-career-platformNSG `
       --query "[].{name:name,src:sourceAddressPrefix,port:destinationPortRange,access:access}" -o table
     ```
-    Expected: a single row, `AllowSSHFromLaptop  157.242.208.150/32  22  Allow`.
+    Expected: a single row, `AllowSSHFromLaptop  <LAPTOP_IP>/32  22  Allow`.
   - **Undo:** `az network nsg rule delete -g rg-career-platform --nsg-name vm-career-platformNSG -n AllowSSHFromLaptop`
   - **Update if the laptop IP changes:** `az network nsg rule update -g rg-career-platform --nsg-name vm-career-platformNSG -n AllowSSHFromLaptop --source-address-prefixes <new-ip>/32` (get the new IP with `curl -4 -s https://api.ipify.org`).
 
@@ -86,14 +86,14 @@ These failure modes are the most likely to cause trouble, and each one looks lik
     cat >> ~/.ssh/config <<'EOF'
 
     Host career-vm
-        HostName 20.80.7.163
+        HostName <VM_IP>
         User azureuser
         IdentityFile ~/.ssh/isba4775_azure
         IdentitiesOnly yes
     EOF
     ```
   - **Why:** Every later step uses `career-vm`, so no command can accidentally use the wrong IP, user or key. `IdentitiesOnly` stops SSH from trying other keys first.
-  - **Check:** `ssh -G career-vm | grep -E '^(hostname|user|identityfile) '`. Expected: `hostname 20.80.7.163`, `user azureuser`, `identityfile ~/.ssh/isba4775_azure`.
+  - **Check:** `ssh -G career-vm | grep -E '^(hostname|user|identityfile) '`. Expected: `hostname <VM_IP>`, `user azureuser`, `identityfile ~/.ssh/isba4775_azure`.
   - **Undo:** Delete the `Host career-vm` block from `~/.ssh/config`.
 
 - [ ] **S4. First SSH login**
@@ -101,7 +101,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
   - **Run:** `ssh career-vm 'hostname; lsb_release -ds; whoami'`. Answer `yes` to the host-key prompt the first time.
   - **Why:** Proves that the network rule, key and user all work before anything else depends on them. It also records the VM's host key in `~/.ssh/known_hosts`.
   - **Check:** Expected output: `vm-career-platform`, `Ubuntu 24.04.x LTS`, `azureuser`, with no password prompt.
-  - **Undo:** `ssh-keygen -R 20.80.7.163` removes the saved host key.
+  - **Undo:** `ssh-keygen -R <VM_IP>` removes the saved host key.
 
 ## Section 2: Packages
 
