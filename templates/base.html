@@ -7,6 +7,25 @@
     <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
   </head>
   <body>
-    {% block content %}{% endblock %}
+    {% set nav_links = [('/', 'Home'), ('/about', 'About'), ('/experience', 'Experience'), ('/projects', 'Projects'), ('/skills', 'Skills'), ('/credentials', 'Credentials'), ('/contact', 'Contact')] %}
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="site-name" href="/">{{ profile.full_name }}</a>
+        <nav aria-label="Main">
+          {% for href, label in nav_links %}
+          <a href="{{ href }}"{% if request.url.path == href %} aria-current="page"{% endif %}>{{ label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    </header>
+    <main class="container">
+      {% if degraded %}
+      <p class="status-banner">Profile view is in fallback mode while the database is unavailable.</p>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+      <div class="container">&copy; 2026 {{ profile.full_name }}</div>
+    </footer>
   </body>
 </html>

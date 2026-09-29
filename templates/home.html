@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="profile-shell">
-  {% if degraded %}
-  <p class="status-banner">Profile view is in fallback mode while the database is unavailable.</p>
-  {% endif %}
+<section class="hero">
   <h1>{{ profile.headline }}</h1>
   <p>{{ profile.summary }}</p>
   <p>{{ profile.location }}</p>
