@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="profile-shell">
-  <h1>About</h1>
-  <p>Analytics and finance professional focused on measurable business outcomes.</p>
-</section>
+<h1>About</h1>
+<p>{{ profile.summary }}</p>
+{% if profile.target_roles %}
+<h2>Target roles</h2>
+<p class="tags">{% for role in profile.target_roles %}<span class="tag">{{ role }}</span>{% endfor %}</p>
+{% endif %}
+<h2>Location &amp; availability</h2>
+<p>{{ profile.location }}{% if profile.availability_status %} · {{ profile.availability_status }}{% endif %}</p>
 {% endblock %}

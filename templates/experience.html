@@ -1,7 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="profile-shell">
-  <h1>Experience</h1>
-  <p>Background includes operational analytics, financial analysis, and business strategy.</p>
-</section>
+<h1>Experience</h1>
+{% for e in experiences %}
+<article class="card">
+  <div class="card-head">
+    <h3>{{ e.title }}</h3>
+    {% if e.start_date %}<p class="dates">{{ e.start_date|month }} – {% if e.end_date %}{{ e.end_date|month }}{% else %}Present{% endif %}</p>{% endif %}
+  </div>
+  <p class="meta">{{ e.company_name }}{% if e.location %} · {{ e.location }}{% endif %}</p>
+  {% if e.highlights %}
+  <ul>{% for h in e.highlights %}<li>{{ h }}</li>{% endfor %}</ul>
+  {% else %}
+  <p>{{ e.summary }}</p>
+  {% endif %}
+</article>
+{% else %}
+<p class="empty">No experience listed yet.</p>
+{% endfor %}
 {% endblock %}

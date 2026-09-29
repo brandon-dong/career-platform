@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="profile-shell">
-  <h1>Projects</h1>
-  <p>Case studies and work samples in analytics and finance.</p>
-</section>
+<h1>Projects</h1>
+{% for p in projects %}
+<article class="card">
+  <h3>{{ p.title }}</h3>
+  <p class="lead">{{ p.short_description }}</p>
+  <h4>Problem</h4>
+  <p>{{ p.problem_statement }}</p>
+  <h4>Solution</h4>
+  <p>{{ p.solution_summary }}</p>
+  <h4>Impact</h4>
+  <p>{{ p.impact_summary }}</p>
+  {% if p.tools %}
+  <p class="tags">{% for tool in p.tools %}<span class="tag">{{ tool }}</span>{% endfor %}</p>
+  {% endif %}
+</article>
+{% else %}
+<p class="empty">No projects listed yet.</p>
+{% endfor %}
 {% endblock %}

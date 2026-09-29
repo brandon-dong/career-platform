@@ -1,8 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="hero">
-  <h1>{{ profile.headline }}</h1>
+  <h1>{{ profile.full_name }}</h1>
+  <p class="headline">{{ profile.headline }}</p>
+  <p class="meta">{{ profile.location }}{% if profile.availability_status %} · {{ profile.availability_status }}{% endif %}</p>
   <p>{{ profile.summary }}</p>
-  <p>{{ profile.location }}</p>
+  <p class="actions">
+    <a class="button" href="/experience">View experience</a>
+    <a class="button button-secondary" href="/projects">View projects</a>
+  </p>
 </section>
+{% if experiences %}
+{% set focus = experiences[0] %}
+<section>
+  <h2>{{ 'Current focus' if focus.current_role else 'Most recent role' }}</h2>
+  <article class="card">
+    <h3>{{ focus.title }}</h3>
+    <p class="meta">{{ focus.company_name }}{% if focus.location %} · {{ focus.location }}{% endif %}</p>
+    <p>{{ focus.summary }}</p>
+  </article>
+</section>
+{% endif %}
 {% endblock %}

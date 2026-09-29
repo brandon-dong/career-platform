@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
+from app.formatting import format_month
 from app.routes.admin import router as admin_router
 from app.services.fallback_service import get_fallback_profile
 from app.services.profile_service import (
@@ -19,6 +20,7 @@ app.mount('/static', StaticFiles(directory='static'), name='static')
 app.include_router(admin_router)
 
 templates = Jinja2Templates(directory='templates')
+templates.env.filters['month'] = format_month
 
 
 def render_page(request: Request, template: str, **loaders):
