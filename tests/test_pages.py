@@ -38,7 +38,7 @@ def test_about_shows_summary_and_target_roles(seeded):
     assert '<span class="tag">Data Analyst</span>' in text
 
 
-def test_experience_lists_current_role_first_with_dates_and_highlights(seeded):
+def test_experience_lists_newest_first_with_dates_and_highlights(seeded):
     text = client.get('/experience').text
     assert '<h1>Experience</h1>' in text
     assert text.index('Globex') < text.index('Acme Corp')
@@ -139,3 +139,16 @@ def test_home_without_experiences_has_no_focus_card(session_factory):
     assert '<h1>Test Person</h1>' in response.text
     assert 'Current focus' not in response.text
     assert 'Most recent role' not in response.text
+
+
+def test_home_features_newest_role_as_most_recent_when_it_has_ended(seeded, session_factory):
+    db = session_factory()
+    profile_id = db.query(Profile).first().id
+    db.add(Experience(profile_id=profile_id, company_name='Hooli', title='Summer Intern', start_date='2026-03',
+                      end_date='2026-05', current_role=False, summary='Newer past role.',
+                      highlights=[], status='published'))
+    db.commit()
+    db.close()
+    text = client.get('/').text
+    assert '<h2>Most recent role</h2>' in text
+    assert '<h3>Summer Intern</h3>' in text

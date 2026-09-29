@@ -40,7 +40,7 @@ Keep `get_active_profile(db)`. Change and add:
 
 | Function | Returns |
 |---|---|
-| `get_experiences(db)` | Published `Experience` rows ordered by `current_role` descending, then `start_date` descending (strings in `YYYY-MM` sort correctly) |
+| `get_experiences(db)` | Published `Experience` rows ordered by `start_date` descending (strings in `YYYY-MM` sort correctly), then `id`. Changed after final review: current-roles-first featured a club role over the owner's newer internship |
 | `get_projects(db)` | Published `Project` rows ordered by `id` |
 | `get_skills(db)` | Published `Skill` rows ordered by `category`, then `id` |
 | `get_credentials(db)` | Published `Credential` rows ordered by `credential_type`, then `id` |

@@ -13,7 +13,7 @@ def get_experiences(db: Session):
     return (
         db.query(Experience)
         .filter(Experience.status == PUBLISHED)
-        .order_by(Experience.current_role.desc(), Experience.start_date.desc())
+        .order_by(Experience.start_date.desc(), Experience.id)
         .all()
     )
 
