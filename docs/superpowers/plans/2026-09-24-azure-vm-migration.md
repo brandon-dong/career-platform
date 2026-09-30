@@ -54,7 +54,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 1: Server
 
-- [ ] **S1. Allow SSH from the laptop only**
+- [x] **S1. Allow SSH from the laptop only**
   - **Where:** Laptop (PowerShell). Portal alternative: VM → Networking → Add inbound port rule.
   - **Run:**
     ```powershell
@@ -72,14 +72,14 @@ These failure modes are the most likely to cause trouble, and each one looks lik
   - **Undo:** `az network nsg rule delete -g rg-career-platform --nsg-name vm-career-platformNSG -n AllowSSHFromLaptop`
   - **Update if the laptop IP changes:** `az network nsg rule update -g rg-career-platform --nsg-name vm-career-platformNSG -n AllowSSHFromLaptop --source-address-prefixes <new-ip>/32` (get the new IP with `curl -4 -s https://api.ipify.org`).
 
-- [ ] **S2. Make sure the VM is running**
+- [x] **S2. Make sure the VM is running**
   - **Where:** Laptop (PowerShell). Portal alternative: VM → Overview → Start.
   - **Run:** `az vm start -g rg-career-platform -n vm-career-platform`
   - **Why:** The 7 PM auto-shutdown deallocates the VM. If it's stopped, SSH can't connect.
   - **Check:** `az vm get-instance-view -g rg-career-platform -n vm-career-platform --query "instanceView.statuses[1].displayStatus" -o tsv`. Expected: `VM running`.
   - **Undo:** `az vm deallocate -g rg-career-platform -n vm-career-platform`. This stops compute billing. Don't use `az vm stop`, which keeps billing.
 
-- [ ] **S3. Add an SSH alias so the right user and key are always used**
+- [x] **S3. Add an SSH alias so the right user and key are always used**
   - **Where:** Laptop (Git Bash).
   - **Run:**
     ```bash
@@ -96,7 +96,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
   - **Check:** `ssh -G career-vm | grep -E '^(hostname|user|identityfile) '`. Expected: `hostname <VM_IP>`, `user azureuser`, `identityfile ~/.ssh/isba4775_azure`.
   - **Undo:** Delete the `Host career-vm` block from `~/.ssh/config`.
 
-- [ ] **S4. First SSH login**
+- [x] **S4. First SSH login**
   - **Where:** Laptop (Git Bash).
   - **Run:** `ssh career-vm 'hostname; lsb_release -ds; whoami'`. Answer `yes` to the host-key prompt the first time.
   - **Why:** Proves that the network rule, key and user all work before anything else depends on them. It also records the VM's host key in `~/.ssh/known_hosts`.
@@ -105,14 +105,14 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 2: Packages
 
-- [ ] **P1. Record what's already installed**
+- [x] **P1. Record what's already installed**
   - **Where:** VM (`ssh career-vm`).
   - **Run:** `dpkg-query -W -f='${Package} ${Status}\n' git sqlite3 2>&1 | tee ~/preinstalled-packages.txt`
   - **Why:** Ubuntu's cloud image usually includes `git`. Recording this means Undo removes only what we added.
   - **Check:** `cat ~/preinstalled-packages.txt` has one line per package. `git` probably says `install ok installed`, and `sqlite3` probably says it isn't installed.
   - **Undo:** `rm ~/preinstalled-packages.txt`
 
-- [ ] **P2. Install git and sqlite3**
+- [x] **P2. Install git and sqlite3**
   - **Where:** VM.
   - **Run:** `sudo apt-get update && sudo apt-get install -y git sqlite3`
   - **Why:** `git` clones the code. `sqlite3` lets us inspect the copied database on the VM (D4 and V1). The app itself uses Python's built-in `sqlite3` module and doesn't need this CLI.
@@ -121,7 +121,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 3: Code
 
-- [ ] **C1. Clone the repository**
+- [x] **C1. Clone the repository**
   - **Where:** VM.
   - **Run:** `git clone https://github.com/brandon-dong/career-platform.git ~/career-platform`
   - **Why:** GitHub is the source of truth for the code. The repo is public, so no credentials are needed on the VM.
@@ -130,14 +130,14 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 4: Python
 
-- [ ] **Py1. Install uv on the laptop**
+- [x] **Py1. Install uv on the laptop**
   - **Where:** Laptop (PowerShell).
   - **Run:** `winget install --id astral-sh.uv -e`, then open a new terminal.
   - **Why:** The lock file has to be created from the laptop's working copy and committed. uv isn't installed on the laptop yet.
   - **Check:** `uv --version` prints `uv 0.x.y`.
   - **Undo:** `winget uninstall --id astral-sh.uv`
 
-- [ ] **Py2. Create `pyproject.toml` and `uv.lock` from `requirements.txt`**
+- [x] **Py2. Create `pyproject.toml` and `uv.lock` from `requirements.txt`**
   - **Where:** Laptop (Git Bash, in the repo root).
   - **Run:**
     ```bash
@@ -150,7 +150,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
   - **Check:** `uv run pytest` gives the same result as `python -m pytest` did before this change. `git status --short` shows exactly `?? pyproject.toml` and `?? uv.lock`. `git check-ignore uv.lock` prints nothing, meaning it isn't ignored.
   - **Undo:** `rm pyproject.toml uv.lock && rm -rf .venv`
 
-- [ ] **Py3. Commit and push the lock file**
+- [x] **Py3. Commit and push the lock file**
   - **Where:** Laptop (Git Bash).
   - **Run:**
     ```bash
@@ -162,7 +162,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
   - **Check:** `git ls-remote origin refs/heads/main` prints the same SHA as `git rev-parse HEAD`.
   - **Undo:** `git revert HEAD && git push origin main`
 
-- [ ] **Py4. Install uv on the VM and sync dependencies**
+- [x] **Py4. Install uv on the VM and sync dependencies**
   - **Where:** VM.
   - **Run:**
     ```bash
@@ -177,14 +177,14 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 5: Config
 
-- [ ] **Cf1. Create `.env` from the example**
+- [x] **Cf1. Create `.env` from the example**
   - **Where:** VM.
   - **Run:** `cd ~/career-platform && cp .env.example .env && chmod 600 .env`
   - **Why:** `app/config.py` loads `.env` from the repo root. `.env` is gitignored, so it isn't in the clone. `chmod 600` makes it readable only by `azureuser`, because it will hold the admin password.
   - **Check:** `ls -l .env` shows `-rw-------`.
   - **Undo:** `rm ~/career-platform/.env`
 
-- [ ] **Cf2. Set an absolute database path and a new admin password**
+- [x] **Cf2. Set an absolute database path and a new admin password**
   - **Where:** VM.
   - **Run:**
     ```bash
@@ -201,7 +201,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 6: Data
 
-- [ ] **D1. GATE: confirm the laptop database actually has data**
+- [x] **D1. GATE: confirm the laptop database actually has data**
   - **Where:** Laptop (Git Bash, repo root).
   - **Run:**
     ```bash
@@ -212,14 +212,14 @@ These failure modes are the most likely to cause trouble, and each one looks lik
   - **Check:** The file size is greater than 0, the table list includes `profiles` and `experiences`, and `profiles: 1` or more. **If this fails, stop here.** Either point the plan at the real `.db` file (and update the path in D2), or fill in the laptop database first.
   - **Undo:** None needed (read-only).
 
-- [ ] **D2. Take a consistent snapshot on the laptop**
+- [x] **D2. Take a consistent snapshot on the laptop**
   - **Where:** Laptop (Git Bash, repo root).
   - **Run:** `python -c "import sqlite3; s=sqlite3.connect('data/career_platform.db'); d=sqlite3.connect('career_platform.snapshot.db'); s.backup(d); d.close(); s.close()"`
   - **Why:** If the laptop app is running, copying the live file can capture a write halfway through. SQLite's backup API produces a consistent copy. The snapshot filename matches the `career_platform.db` pattern in `.gitignore`, so git won't pick it up.
   - **Check:** `python -c "import sqlite3; print(sqlite3.connect('career_platform.snapshot.db').execute('pragma integrity_check').fetchone()[0])"`. Expected: `ok`.
   - **Undo:** `rm career_platform.snapshot.db`
 
-- [ ] **D3. Copy the snapshot to the VM**
+- [x] **D3. Copy the snapshot to the VM**
   - **Where:** Laptop (Git Bash, repo root).
   - **Run:**
     ```bash
@@ -235,7 +235,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
     ```
   - **Undo:** `ssh career-vm 'rm ~/career-platform/data/career_platform.db'`
 
-- [ ] **D4. Check the database on the VM**
+- [x] **D4. Check the database on the VM**
   - **Where:** VM.
   - **Run:** `sqlite3 ~/career-platform/data/career_platform.db "pragma integrity_check; select count(*) from profiles; select headline from profiles limit 1;"`
   - **Why:** Confirms the file arrived intact and can be read on Linux, before the app depends on it.
@@ -244,7 +244,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 7: Processes
 
-- [ ] **Pr1. Start uvicorn in the background, listening on localhost only**
+- [x] **Pr1. Start uvicorn in the background, listening on localhost only**
   - **Where:** VM.
   - **Run:**
     ```bash
@@ -259,7 +259,7 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 
 ## Section 8: Verify
 
-- [ ] **V1. The site answers on the VM and shows the real profile**
+- [x] **V1. The site answers on the VM and shows the real profile**
   - **Where:** VM.
   - **Run:**
     ```bash
@@ -276,14 +276,14 @@ These failure modes are the most likely to cause trouble, and each one looks lik
   - **Check:** All seven paths return `200`. The headline count is `1` or more. The `fallback mode` count is `0`. `ls` prints `No such file or directory`.
   - **Undo:** None (read-only).
 
-- [ ] **V2. Your browser shows the site through an SSH tunnel**
+- [x] **V2. Your browser shows the site through an SSH tunnel**
   - **Where:** Laptop (Git Bash), then a browser.
   - **Run:** `ssh -N -L 8000:127.0.0.1:8000 career-vm`, leave it running, and open http://localhost:8000
   - **Why:** You see the real rendered page from the VM without opening port 8000 to the internet. Stop any local copy of the app first, since it would also want laptop port 8000.
   - **Check:** The home page shows your name, headline and experience, with no fallback banner. The other nav pages load, and CSS is applied.
   - **Undo:** Press Ctrl+C in the tunnel terminal.
 
-- [ ] **V3. Admin uses the new password**
+- [x] **V3. Admin uses the new password**
   - **Where:** VM.
   - **Run:**
     ```bash
@@ -301,3 +301,34 @@ These failure modes are the most likely to cause trouble, and each one looks lik
 ## Full rollback (VM stays; migration removed)
 
 Run in this order, each step's Undo: Pr1 → D3 → Cf1 → Py4 → C1 → P2 → P1 → S4 → S3 → S1. Py3 (the pushed commit) and Py1 (uv on the laptop) are harmless to keep. Undo them separately if you want. To stop all charges, delete the whole `rg-career-platform` resource group.
+
+---
+
+## Run log (2026-09-29)
+
+All 21 steps ran. Where the run differed from the plan:
+
+| Step | What happened | What we did |
+|---|---|---|
+| S1 | An SSH rule `Allow-SSH-Laptop` (same source IP, port 22) already existed | Deleted the duplicate `AllowSSHFromLaptop`; kept `Allow-SSH-Laptop` |
+| S4 | The host-key prompt can't be answered in a non-interactive shell | Used `StrictHostKeyChecking=accept-new` (still rejects a changed key) |
+| Py2 | No "before" test run was possible: system Python lacked FastAPI/SQLAlchemy | Gate became "all tests pass under uv": 5 passed |
+| Py3 | Plan doc was also uncommitted | Committed it with `pyproject.toml` and `uv.lock` (owner approved) |
+| Cf2 | Plan said to print the new admin password | Not printed, to keep it out of the chat log; read it from `.env` over SSH |
+| D1 | **Gate failed:** `data/career_platform.db` was 0 bytes with no tables | Created tables and loaded the owner's resume data with a local, git-excluded seed script; gate then passed |
+| D2 | `career_platform.snapshot.db` is not matched by `.gitignore` as the plan claimed | Added it to `.git/info/exclude` |
+| V1 | Headline check found 0 matches | The page escapes `&` as `&amp;`; the rendered `<h1>` did show the database headline |
+
+Found later (2026-09-30): after moving networks, the laptop's public IP changed and SSH was blocked until S1's rule was updated to the new IP.
+
+## Verify results
+
+| Check | Where | Expected | Result | Date |
+|---|---|---|---|---|
+| D3 copy matches | Laptop + VM | Same SHA-256 on both | Match | 2026-09-29 |
+| D4 database readable on VM | VM | `integrity_check` ok; 1 profile | ok; 1 profile; headline correct | 2026-09-29 |
+| Pr1 app started | VM | Startup complete; listening on 127.0.0.1:8000 | Both | 2026-09-29 |
+| V1 all pages answer | VM | 7 paths return 200 | 7/7 200 (/, /about, /experience, /projects, /skills, /contact, CSS) | 2026-09-29 |
+| V1 real data, not fallback | VM | Headline present; 0 fallback banners; no stray root `.db` | Headline in `<h1>`; 0 banners; no stray file | 2026-09-29 |
+| V2 browser via SSH tunnel | Laptop | Profile visible, no banner | Confirmed by owner ("Looks good") | 2026-09-29 |
+| V3 admin password replaced | VM | New password 200; default 401 | 200 / 401 | 2026-09-29 |
