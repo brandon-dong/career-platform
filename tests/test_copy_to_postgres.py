@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.models import Experience, Profile
-from scripts.copy_to_postgres import copy_database
+from scripts.copy_to_postgres import copy_database, target_engine_kwargs
 
 
 def target_url(tmp_path):
@@ -43,3 +43,13 @@ def test_refuses_to_copy_into_a_database_that_has_a_profile(tmp_path, source_db_
     assert db.query(Experience).count() == 1
     db.close()
     engine.dispose()
+
+
+def test_remote_target_requires_tls():
+    kwargs = target_engine_kwargs('postgresql://postgres:pw@shuttle.proxy.rlwy.net:41234/railway')
+    assert kwargs['connect_args'] == {'connect_timeout': 10, 'sslmode': 'require'}
+
+
+def test_local_target_does_not_require_tls():
+    kwargs = target_engine_kwargs('postgresql://postgres:test@localhost:54329/career_test')
+    assert kwargs['connect_args'] == {'connect_timeout': 10}

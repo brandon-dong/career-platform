@@ -639,15 +639,15 @@ Expected: all pass, with `test_copy_resets_id_sequences` PASSED, not skipped. To
 TARGET_DATABASE_URL=$TEST_POSTGRES_URL .venv/Scripts/python.exe scripts/copy_to_postgres.py
 ```
 
-Expected output:
+Expected output (tables print in alphabetical order, because none has a foreign key):
 ```
-profiles: 1
+contact_submissions: 0
+content_pieces: 0
+credentials: 6
 experiences: 3
+profiles: 1
 projects: 1
 skills: 9
-credentials: 6
-content_pieces: 0
-contact_submissions: 0
 ```
 
 Then serve the site from the local Postgres and look at it:
@@ -715,7 +715,8 @@ Each step has **Where / Do / Why / Check / Undo**, like the Azure plans. Real va
 - [ ] **R5. Copy the data**
   - **Where:** Laptop, Git Bash, repo root, on the commit pushed in Task 5.
   - **Do:** `.venv/Scripts/python.exe scripts/copy_to_postgres.py`, then paste `DATABASE_PUBLIC_URL` at the hidden prompt.
-  - **Check:** The output matches Task 5 Step 7 (1 / 3 / 1 / 9 / 6 / 0 / 0). Running it again prints `Target already has a profile; refusing to overwrite.` and changes nothing. In Postgres → Database → Data, `profiles` has 1 row.
+  - **TLS:** For any non-localhost Postgres the script connects with `sslmode=require`, so the password never crosses the internet in plaintext. If it fails with `server does not support SSL`, stop. Don't disable the check; ask first.
+  - **Check:** The output matches Task 5 Step 7 by name: credentials 6, experiences 3, profiles 1, projects 1, skills 9, and the other two 0. Running it again prints `Target already has a profile; refusing to overwrite.` and changes nothing. In Postgres → Database → Data, `profiles` has 1 row.
   - **Undo (start over):** Postgres → Database → Data → drop the seven tables, then run R5 again.
 
 - [ ] **R6. Close Postgres again**

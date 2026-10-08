@@ -12,19 +12,30 @@ import sys
 from pathlib import Path
 
 from sqlalchemy import create_engine, func, select, text
+from sqlalchemy.engine import make_url
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 import app.models  # noqa: E402,F401  registers tables on Base.metadata
-from database import Base  # noqa: E402
+from database import Base, engine_kwargs  # noqa: E402
 
 SOURCE_PATH = ROOT / 'data' / 'career_platform.db'
+LOCAL_HOSTS = ('localhost', '127.0.0.1')
+
+
+def target_engine_kwargs(target_url: str) -> dict:
+    kwargs = engine_kwargs(target_url)
+    url = make_url(target_url)
+    if url.get_backend_name() == 'postgresql' and url.host not in LOCAL_HOSTS:
+        # Over the public TCP proxy, refuse a plaintext fallback that would expose the password.
+        kwargs['connect_args'] = {**kwargs['connect_args'], 'sslmode': 'require'}
+    return kwargs
 
 
 def copy_database(source_url: str, target_url: str) -> dict[str, int]:
     source = create_engine(source_url, future=True)
-    target = create_engine(target_url, future=True)
+    target = create_engine(target_url, **target_engine_kwargs(target_url))
     try:
         Base.metadata.create_all(bind=target)
         profiles = Base.metadata.tables['profiles']
