@@ -4,7 +4,7 @@
 {% for e in experiences %}
 <article class="card">
   <div class="card-head">
-    <h3>{{ e.title }}</h3>
+    <h2>{{ e.title }}</h2>
     {% if e.start_date %}<p class="dates">{{ e.start_date|month }} – {% if e.end_date %}{{ e.end_date|month }}{% else %}Present{% endif %}</p>{% endif %}
   </div>
   <p class="meta">{{ e.company_name }}{% if e.location %} · {{ e.location }}{% endif %}</p>

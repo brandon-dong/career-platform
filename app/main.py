@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
+from app.config import CONTACT_EMAIL, LINKEDIN_URL
 from app.formatting import format_month
 from app.routes.admin import router as admin_router
 from app.services.fallback_service import get_fallback_profile
@@ -21,6 +22,7 @@ app.include_router(admin_router)
 
 templates = Jinja2Templates(directory='templates')
 templates.env.filters['month'] = format_month
+templates.env.globals['contact'] = {'email': CONTACT_EMAIL, 'linkedin': LINKEDIN_URL}
 
 
 def render_page(request: Request, template: str, **loaders):

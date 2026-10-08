@@ -50,9 +50,9 @@ def test_experience_lists_newest_first_with_dates_and_highlights(seeded):
 
 def test_projects_show_sections_and_hide_drafts(seeded):
     text = client.get('/projects').text
-    assert '<h3>Widget Analysis</h3>' in text
+    assert '<h2>Widget Analysis</h2>' in text
     for heading in ('Problem', 'Solution', 'Impact'):
-        assert f'<h4>{heading}</h4>' in text
+        assert f'<h3>{heading}</h3>' in text
     assert '<span class="tag">Python</span>' in text
     assert 'Secret Draft' not in text
 

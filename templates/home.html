@@ -6,8 +6,9 @@
   <p class="meta">{{ profile.location }}{% if profile.availability_status %} · {{ profile.availability_status }}{% endif %}</p>
   <p>{{ profile.summary }}</p>
   <p class="actions">
-    <a class="button" href="/experience">View experience</a>
-    <a class="button button-secondary" href="/projects">View projects</a>
+    <a class="button" href="mailto:{{ contact.email }}">Email me</a>
+    <a class="button button-secondary" href="/experience">View experience</a>
+    <a class="button button-secondary" href="{{ contact.linkedin }}">LinkedIn</a>
   </p>
 </section>
 {% if experiences %}

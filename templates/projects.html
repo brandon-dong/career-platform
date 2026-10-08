@@ -3,13 +3,13 @@
 <h1>Projects</h1>
 {% for p in projects %}
 <article class="card">
-  <h3>{{ p.title }}</h3>
+  <h2>{{ p.title }}</h2>
   <p class="lead">{{ p.short_description }}</p>
-  <h4>Problem</h4>
+  <h3>Problem</h3>
   <p>{{ p.problem_statement }}</p>
-  <h4>Solution</h4>
+  <h3>Solution</h3>
   <p>{{ p.solution_summary }}</p>
-  <h4>Impact</h4>
+  <h3>Impact</h3>
   <p>{{ p.impact_summary }}</p>
   {% if p.tools %}
   <p class="tags">{% for tool in p.tools %}<span class="tag">{{ tool }}</span>{% endfor %}</p>

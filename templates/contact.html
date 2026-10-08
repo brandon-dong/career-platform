@@ -1,5 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Contact</h1>
-<p>Recruiter inquiry form coming soon.</p>
+<p>The best way to reach me is email or LinkedIn.</p>
+<dl class="contact-list">
+  <dt>Email</dt>
+  <dd><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></dd>
+  <dt>LinkedIn</dt>
+  <dd><a href="{{ contact.linkedin }}">{{ contact.linkedin|replace('https://www.', '')|trim('/') }}</a></dd>
+  {% if profile.location %}
+  <dt>Location</dt>
+  <dd>{{ profile.location }}{% if profile.availability_status %} · {{ profile.availability_status }}{% endif %}</dd>
+  {% endif %}
+</dl>
 {% endblock %}
