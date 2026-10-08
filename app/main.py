@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.config import CONTACT_EMAIL, LINKEDIN_URL
 from app.formatting import format_month
@@ -17,6 +18,9 @@ from app.services.profile_service import (
 from database import SessionLocal
 
 app = FastAPI(title='Career Platform')
+# Railway ends HTTPS at its edge and forwards plain HTTP. Trusting its
+# X-Forwarded-Proto header makes url_for() build https:// links.
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts='*')
 app.mount('/static', StaticFiles(directory='static'), name='static')
 app.include_router(admin_router)
 
