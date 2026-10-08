@@ -10,9 +10,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import sessionmaker
 
-from app.models import Experience, Profile
+from app.models import Credential, Experience, Profile, Skill
 from app.services.profile_service import get_experiences
 from database import Base
+from scripts.copy_to_postgres import copy_database
 
 PG_URL = os.getenv('TEST_POSTGRES_URL')
 pytestmark = pytest.mark.skipif(not PG_URL, reason='set TEST_POSTGRES_URL to run PostgreSQL tests')
@@ -51,3 +52,13 @@ def test_undated_experience_lists_last(pg_db):
     ])
     pg_db.commit()
     assert [e.company_name for e in get_experiences(pg_db)] == ['Dated', 'Undated']
+
+
+def test_copy_resets_id_sequences(pg_engine, pg_db, source_db_url):
+    copy_database(source_db_url, PG_URL)
+    skill = Skill(profile_id=1, category='tools', name='New Skill')
+    credential = Credential(profile_id=1, credential_type='award', name='First', issuer='X')
+    pg_db.add_all([skill, credential])
+    pg_db.commit()
+    assert skill.id == 3       # copied table: continues after max(id)
+    assert credential.id == 1  # empty table: starts at 1

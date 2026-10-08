@@ -74,3 +74,26 @@ def broken_db(monkeypatch):
             pass
 
     monkeypatch.setattr(app_main, 'SessionLocal', BrokenSession)
+
+
+@pytest.fixture
+def source_db_url(tmp_path):
+    """A standalone SQLite file to copy from: 1 profile, 2 skills, 1 experience."""
+    url = f"sqlite:///{(tmp_path / 'source.db').as_posix()}"
+    engine = create_engine(url, future=True)
+    Base.metadata.create_all(bind=engine)
+    db = sessionmaker(bind=engine)()
+    profile = Profile(full_name='Source Person', headline='H', summary='S', location='L',
+                      target_roles=['Data Analyst'])
+    db.add(profile)
+    db.flush()
+    db.add_all([
+        Skill(profile_id=profile.id, category='tools', name='Python'),
+        Skill(profile_id=profile.id, category='tools', name='SQL'),
+        Experience(profile_id=profile.id, company_name='Acme', title='Analyst', start_date='2024-01',
+                   summary='Did things.', highlights=['Built a model'], current_role=False),
+    ])
+    db.commit()
+    db.close()
+    engine.dispose()
+    return url
