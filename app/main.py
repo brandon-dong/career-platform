@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
@@ -82,3 +83,17 @@ def credentials(request: Request):
 @app.get('/contact')
 def contact(request: Request):
     return render_page(request, 'contact.html')
+
+
+@app.get('/healthz')
+def healthz():
+    db = SessionLocal()
+    try:
+        has_profile = get_active_profile(db) is not None
+    except Exception:
+        return JSONResponse({'status': 'database unavailable'}, status_code=503)
+    finally:
+        db.close()
+    if not has_profile:
+        return JSONResponse({'status': 'no profile'}, status_code=503)
+    return {'status': 'ok'}
