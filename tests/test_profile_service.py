@@ -1,6 +1,6 @@
 import pytest
 
-from app.models import Experience
+from app.models import Experience, Profile
 from app.services.profile_service import get_credentials, get_experiences, get_projects, get_skills
 
 
@@ -38,3 +38,19 @@ def test_get_experiences_orders_by_newest_start_even_if_role_ended(db):
                       highlights=[], status='published'))
     db.commit()
     assert [e.company_name for e in get_experiences(db)] == ['Hooli', 'Globex', 'Acme Corp']
+
+
+def test_undated_experience_lists_last_on_sqlite(session_factory):
+    db = session_factory()
+    profile = Profile(full_name='T', headline='H', summary='S', location='L')
+    db.add(profile)
+    db.flush()
+    db.add_all([
+        Experience(profile_id=profile.id, company_name='Undated', title='A', start_date=None,
+                   summary='x', status='published'),
+        Experience(profile_id=profile.id, company_name='Dated', title='B', start_date='2025-01',
+                   summary='x', status='published'),
+    ])
+    db.commit()
+    assert [e.company_name for e in get_experiences(db)] == ['Dated', 'Undated']
+    db.close()
