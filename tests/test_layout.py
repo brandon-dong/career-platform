@@ -38,3 +38,8 @@ def test_every_page_shows_fallback_when_no_profile(path):
     response = client.get(path)
     assert response.status_code == 200
     assert BANNER in response.text
+
+
+def test_footer_says_where_the_site_is_hosted(seeded):
+    footer = client.get('/').text.split('<footer', 1)[1]
+    assert 'Hosted on Railway' in footer
