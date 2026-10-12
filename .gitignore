@@ -224,3 +224,6 @@ career_platform.db
 *.pyc
 
 .venv/
+
+# Cloudflare CLI (cf) local cache: account details, never commit
+.cloudflare/
