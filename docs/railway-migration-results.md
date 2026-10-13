@@ -33,7 +33,7 @@ Both sides had the same seven tables. The VM's live database still hashed the sa
 | `/admin` with the published default password | 401 |
 | Write test: skill added through the Railway CLI (`railway run -s Postgres`) | "Cloudflare DNS" inserted as id 10 and shown on `/skills` |
 | Update test: commit `a81cd86` ("Hosted on Railway" footer) pushed | Railway deployment `74e886c2` built that SHA, SUCCESS, footer live ~50 s after the push |
-| Custom domain `brandondong.me` | CNAME and TXT records published; certificate: see below |
+| Custom domain `brandondong.me` | HTTPS 200 with a certificate for `brandondong.me` (2026-10-13 02:57 UTC); see below |
 
 ### Custom domain
 
@@ -43,7 +43,7 @@ DNS was changed at 21:48 UTC on 2026-10-12 with the Cloudflare CLI (`cf`):
 - Added `TXT _railway-verify` with Railway's verification value.
 - `www` left as `A 20.80.7.163` (the Railway trial allows one custom domain).
 
-Certificate status: **pending** at the time of writing. Railway reported "Waiting for DNS update" on the TXT record while public resolvers already returned the correct value. The zone's negative-cache TTL is 30 minutes. Investigation: [evidence/ex05.md](evidence/ex05.md).
+Certificate status: **issued.** Railway staff re-triggered verification after a support request, and on 2026-10-13 02:57 UTC `https://brandondong.me` served `CN=brandondong.me` (Let's Encrypt YE2) with HTTP 200. Before that it was pending. Railway reported "Waiting for DNS update" on the TXT record while public resolvers already returned the correct value. The zone's negative-cache TTL is 30 minutes. Investigation: [evidence/ex05.md](evidence/ex05.md).
 
 ## Rollback
 
