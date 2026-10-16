@@ -41,18 +41,26 @@ DNS was changed at 21:48 UTC on 2026-10-12 with the Cloudflare CLI (`cf`):
 
 - `@` changed from `A 20.80.7.163` (Azure VM) to `CNAME gvb8rrd4.up.railway.app`, DNS only.
 - Added `TXT _railway-verify` with Railway's verification value.
-- `www` left as `A 20.80.7.163` (the Railway trial allows one custom domain).
+- `www` left as `A 20.80.7.163` (the Railway trial allows one custom domain). Changed on 2026-10-16; see [Azure VM decommissioned](#azure-vm-decommissioned).
 
 Certificate status: **issued.** Railway staff re-triggered verification after a support request, and on 2026-10-13 02:57 UTC `https://brandondong.me` served `CN=brandondong.me` (Let's Encrypt YE2) with HTTP 200. Before that it was pending. Railway reported "Waiting for DNS update" on the TXT record while public resolvers already returned the correct value. The zone's negative-cache TTL is 30 minutes. Investigation: [evidence/ex05.md](evidence/ex05.md).
 
 ## Rollback
 
 - **Code:** revert the commit and push. Railway redeploys `main` on every push.
-- **DNS:** delete the `@` CNAME and recreate `A @ 20.80.7.163`, DNS only. The VM is still running with its own SQLite copy.
-- **Data:** once Railway takes writes, pointing DNS back at the VM loses them. The VM's data is a snapshot from 2026-10-08. Before rolling back, pause writes and compare both databases (the comparison above is the method), then copy any new rows back.
+- **Hosting:** there is no second host anymore. The Azure VM was deleted on 2026-10-16, so DNS can't be pointed back at it.
+- **Data:** Railway Postgres is the only current copy. The VM and its SQLite copy (snapshot from 2026-10-08) were deleted with it. The `.db` files in this repo date from 2026-09-29 and are older than that snapshot.
+
+## Azure VM decommissioned
+
+On 2026-10-16 the VM was removed so nothing on Azure keeps billing. Before that, the VM was already deallocated, but its Standard static public IP and 30 GB StandardSSD OS disk still billed about $6/month.
+
+1. **`www` moved off the VM's IP first (22:11:43 UTC).** The record was `A 20.80.7.163`, DNS only. That IP would be released with the resource group and could be assigned to another Azure customer, so `www` would have served their site. With the Cloudflare CLI, `www` became `A 192.0.2.1`, **proxied**. `192.0.2.1` is a reserved placeholder address that never receives traffic. Proxying lets the zone's existing redirect rule ("Redirect from WWW to root", 301, created 2026-10-13) run at Cloudflare's edge. It had never run before, because Cloudflare only applies redirect rules to proxied records.
+2. **Checked:** `http://` and `https://www.brandondong.me/skills?x=1` both return `301` to `https://brandondong.me/skills?x=1`, which ends at HTTP 200. The edge certificate covers `brandondong.me` and `*.brandondong.me` (`Verify return code: 0 (ok)`). `cf dns records list --content 20.80.7.163` returned `[]`.
+3. **Resource group deleted (22:12:19 → 22:15:14 UTC).** `az group delete --name rg-career-platform` removed the VM, OS disk, public IP, NIC, NSG, VNet and auto-shutdown schedule. `az group exists` then returned `false`. The only resource left in the subscription is `NetworkWatcher_northcentralus`, which Azure creates automatically and does not bill.
 
 ## Cost notes
 
 - Railway trial: 30 days or $5.00 of usage, whichever comes first. On 2026-10-12 the dashboard showed **26 days or $4.83 left**, so about $0.17 was used in 4 days. The trial ends around **2026-11-07**. The Free plan after it allows no custom domain.
 - Public traffic through the Postgres TCP proxy is billed as egress, so the proxy is removed after the migration.
-- Azure VM (`Standard_B2ats_v2`) keeps running as the fallback until the instructor says it can stop. Its cost is in Azure Cost Management.
+- Azure VM (`Standard_B2ats_v2`): deleted on 2026-10-16 with its resource group (see above). Azure no longer bills for it. Cost Management may still show the last partial day, because usage data arrives about a day late.

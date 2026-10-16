@@ -33,7 +33,7 @@ Compared with Tuesday's Azure setup, the firewall rule, nginx `server_name`, Cer
 
 I took an online SQLite backup on the VM and checked that it reads. Then I copied it into Railway Postgres with `scripts/copy_to_postgres.py`, which runs in one transaction and resets the id sequences. Finally I compared the two databases table by table: row counts, rows matched by id, and content hashes all matched. Details, rollback and cost notes: [docs/railway-migration-results.md](docs/railway-migration-results.md). Plan: [docs/superpowers/plans/2026-10-08-railway-migration.md](docs/superpowers/plans/2026-10-08-railway-migration.md).
 
-**Trial clock:** Railway's trial ends around **2026-11-07**, or at $5 of usage. The Free plan after that drops the custom domain, so the Azure VM stays running as the fallback.
+**Trial clock:** Railway's trial ends around **2026-11-07**, or at $5 of usage. The Free plan after that drops the custom domain. There is no fallback host anymore: the Azure VM was deleted on 2026-10-16, so plan the move to a paid plan (or another host) before the trial ends.
 
 ## Decision: should a three-developer startup move from an Azure VM to Railway?
 
