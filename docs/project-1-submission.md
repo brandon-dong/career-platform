@@ -7,3 +7,4 @@
 - [Operate the VM plan](superpowers/plans/2026-10-01-operate-the-vm.md)
 - [How the site was secured on the VM](how-this-site-is-secured.md)
 - [Exercise 05: DNS/TLS failure record](evidence/ex05.md): the custom-domain certificate failure during the Railway cutover
+- [Exercise 06: domain email and Google Analytics](evidence/ex06.md): Zoho Mail tests with SPF/DKIM/DMARC results, and GA4 `page_view` and outbound `click` evidence
