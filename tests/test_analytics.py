@@ -78,6 +78,15 @@ def test_tag_waits_for_consent(seeded, analytics_on):
     assert denied < head.index("gtag('config'")
 
 
+def test_page_view_waits_for_the_consent_update(seeded, analytics_on):
+    # config (which sends page_view) is queued before consent.js adds the
+    # 'granted' update. Without wait_for_update, gtag.js sends that page_view
+    # as a denied, cookieless ping that GA4 Realtime never shows.
+    head = head_of(client.get('/').text)
+    default = re.search(r"gtag\('consent', 'default', \{[^}]*\}\)", head).group(0)
+    assert "'wait_for_update': 500" in default
+
+
 def test_consent_banner_and_settings_start_hidden(seeded, analytics_on):
     html = client.get('/').text
     banner = re.search(r'<div[^>]*data-consent-banner[^>]*>', html).group(0)
