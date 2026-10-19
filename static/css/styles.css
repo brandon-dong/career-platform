@@ -169,3 +169,56 @@ main:focus { outline: none; }
   .contact-list { grid-template-columns: 1fr; gap: 2px; }
   .contact-list dd { margin-bottom: 12px; }
 }
+
+.prose { max-width: 70ch; }
+.prose ul { padding-left: 20px; }
+.prose li { margin-bottom: 6px; }
+.prose code { background: var(--soft); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: 0.9em; }
+
+/* Footer "Cookie settings" looks like the footer links but is a button,
+   because it opens the banner instead of going to a page. */
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.consent-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  background: #fff;
+  border-top: 2px solid var(--accent);
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.12);
+}
+.consent-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.consent-inner p { margin: 0; flex: 1 1 320px; }
+.consent-actions { display: flex; gap: 12px; }
+/* Accept and Decline get equal weight so neither choice is nudged. */
+.consent-actions button {
+  min-height: 44px;
+  padding: 8px 22px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: #fff;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.consent-actions button:hover { background: var(--soft); }
+.consent-banner[hidden], .link-button[hidden] { display: none; }

@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
-from app.config import CONTACT_EMAIL, LINKEDIN_URL
+from app.config import CONTACT_EMAIL, GA_MEASUREMENT_ID, LINKEDIN_URL
 from app.formatting import format_month
 from app.routes.admin import router as admin_router
 from app.services.fallback_service import get_fallback_profile
@@ -28,6 +28,7 @@ app.include_router(admin_router)
 templates = Jinja2Templates(directory='templates')
 templates.env.filters['month'] = format_month
 templates.env.globals['contact'] = {'email': CONTACT_EMAIL, 'linkedin': LINKEDIN_URL}
+templates.env.globals['analytics_id'] = GA_MEASUREMENT_ID
 
 
 def render_page(request: Request, template: str, **loaders):
@@ -83,6 +84,11 @@ def credentials(request: Request):
 @app.get('/contact')
 def contact(request: Request):
     return render_page(request, 'contact.html')
+
+
+@app.get('/privacy')
+def privacy(request: Request):
+    return render_page(request, 'privacy.html')
 
 
 @app.get('/healthz')

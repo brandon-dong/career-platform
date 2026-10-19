@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<article class="prose">
+<h1>Privacy</h1>
+<p class="meta">Last updated October 19, 2026</p>
+
+<p>This is a personal career site. It has no accounts, no forms and no comments, so the only information it handles about visitors is described below.</p>
+
+<h2>Google Analytics (only if you accept)</h2>
+<p>When you first visit, a banner asks whether you accept Google Analytics. Until you click <strong>Accept</strong>, the analytics script is not loaded, nothing is sent to Google, and no analytics cookies are set. If you click <strong>Decline</strong>, the site works exactly the same.</p>
+<p>If you accept, Google Analytics 4 records:</p>
+<ul>
+  <li>the pages you view (their address and title) and the site that sent you here;</li>
+  <li>clicks on links that lead to other websites (outbound clicks), including the address of the link, for example my LinkedIn profile;</li>
+  <li>Google's other automatic measurements, such as scrolling to the bottom of a page or downloading a file;</li>
+  <li>general device details Google collects itself: browser, operating system, screen size, language, and an approximate location (city or region) that Google derives from your IP address.</li>
+</ul>
+<p>It also sets two cookies on this site, <code>_ga</code> and <code>_ga_&lt;ID&gt;</code>, so that repeat visits from the same browser can be counted. Google sets them to expire after up to two years.</p>
+
+<h2>Why</h2>
+<p>To see whether people find the site, which pages they read, and whether they go on to my LinkedIn profile. The numbers can't show why someone clicked or what they did on the other site. I don't use the data for advertising, and this site never grants Google permission to use it for ads.</p>
+
+<h2>Who receives it</h2>
+<ul>
+  <li><strong>Google</strong> receives the analytics data above, under the <a href="https://policies.google.com/privacy">Google Privacy Policy</a>. I see summary reports in Google Analytics.</li>
+  <li><strong>Railway</strong>, which hosts the site, receives every request your browser makes to it, as any web host does, and may keep server logs that include your IP address.</li>
+  <li><strong>Cloudflare</strong> provides the site's DNS and handles the redirect from www.brandondong.me.</li>
+</ul>
+<p>I don't sell or share the data with anyone else.</p>
+
+<h2>Your choices</h2>
+<ul>
+  <li><strong>Decline</strong> in the banner, and Google Analytics never loads.</li>
+  <li>Use <strong>Cookie settings</strong> in the footer to change your mind at any time. If you withdraw consent, the page reloads without Google Analytics and the site removes its <code>_ga</code> cookies. Data already sent to Google stays in Google Analytics until it expires.</li>
+  <li>Your choice itself is saved in your browser's local storage (as <code>analytics-consent</code>) so the banner doesn't ask on every page. Clearing your site data resets it.</li>
+  <li>Browser privacy settings, content blockers, or <a href="https://tools.google.com/dlpage/gaoptout">Google's opt-out add-on</a> also block Google Analytics. The site keeps working.</li>
+</ul>
+
+<h2>Questions</h2>
+<p>Email me at <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>.</p>
+</article>
+{% endblock %}

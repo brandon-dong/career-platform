@@ -1,8 +1,23 @@
 <!doctype html>
 <html lang="en">
   <head>
+    {% if analytics_id %}
+    <!-- Google tag (gtag.js) -->
+    {# Google's snippet, changed so nothing reaches Google before consent:
+       type="text/plain" stops the browser loading gtag.js (consent.js swaps
+       it in after Accept), and consent mode starts with storage denied. #}
+    <script async type="text/plain" data-consent="analytics" src="https://www.googletagmanager.com/gtag/js?id={{ analytics_id }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {'analytics_storage': 'denied', 'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied'});
+      gtag('js', new Date());
+
+      gtag('config', '{{ analytics_id }}');
+    </script>
+    {% endif %}
     {% set nav_links = [('/', 'Home'), ('/about', 'About'), ('/experience', 'Experience'), ('/projects', 'Projects'), ('/skills', 'Skills'), ('/credentials', 'Credentials'), ('/contact', 'Contact')] %}
-    {% set page_label = (nav_links|selectattr('0', 'equalto', request.url.path)|map(attribute='1')|first) if request.url.path != '/' else '' %}
+    {% set page_label = (nav_links + [('/privacy', 'Privacy')])|selectattr('0', 'equalto', request.url.path)|map(attribute='1')|first if request.url.path != '/' else '' %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if page_label %}{{ page_label }} · {% endif %}{{ profile.full_name }}</title>
@@ -33,8 +48,22 @@
         <span class="footer-links">
           <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
           <a href="{{ contact.linkedin }}">LinkedIn</a>
+          <a href="/privacy">Privacy</a>
+          {% if analytics_id %}<button type="button" class="link-button" data-consent-open hidden>Cookie settings</button>{% endif %}
         </span>
       </div>
     </footer>
+    {% if analytics_id %}
+    <div class="consent-banner" data-consent-banner role="region" aria-label="Analytics choice" hidden>
+      <div class="container consent-inner">
+        <p>This site uses Google Analytics to count page views and clicks on links to other sites. It stays off unless you accept. <a href="/privacy">Privacy</a></p>
+        <div class="consent-actions">
+          <button type="button" data-consent-choice="granted">Accept</button>
+          <button type="button" data-consent-choice="denied">Decline</button>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', path='js/consent.js') }}" defer></script>
+    {% endif %}
   </body>
 </html>
