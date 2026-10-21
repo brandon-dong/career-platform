@@ -14,9 +14,9 @@ Audit against the Project 1 requirements, 2026-10-20, updated 2026-10-21. Each l
 
 ## 1. Profile and project data (15 pts)
 
-- [ ] Pages return HTTP 503 when the database fails: `app/main.py` `render_page`, with a test in `tests/test_pages.py`
-- [ ] Real profile stays visible on database failure instead of the invented fallback profile: `app/services/fallback_service.py`, `app/main.py`
-- [ ] Database failure shows "Projects temporarily unavailable", distinct from the empty-table message: `templates/projects.html`
+- [x] Pages return HTTP 503 when the database fails: `app/main.py` `render_page`, with a test in `tests/test_pages.py` — done: commit `7c4fce6`; Railway deploy not yet confirmed
+- [x] Real profile stays visible on database failure instead of the invented fallback profile: `app/services/fallback_service.py`, `app/main.py` — done: commit `7c4fce6`
+- [x] Database failure shows "Projects temporarily unavailable", distinct from the empty-table message: `templates/projects.html` — done: commit `7c4fce6`
 - [ ] Record a database-down → recovered-without-restart check, with date and result: new section in `docs/railway-migration-results.md`
 - [ ] Add a clearly labeled "this website, in progress" project entry: Railway Postgres `projects` table
 
@@ -30,9 +30,9 @@ Audit against the Project 1 requirements, 2026-10-20, updated 2026-10-21. Each l
 
 ## 3. Domain and HTTPS (15 pts)
 
-- [ ] Final DNS record list after Zoho (web, `www` redirect, MX, SPF, DKIM, DMARC, verification TXT), each with its purpose and the date: `cf dns records list`, saved to `docs/evidence/dns-final.md`
-- [ ] Re-verify final HTTPS for `https://brandondong.me`, `http://www` and `https://www` today (status, certificate name, dates): `docs/evidence/dns-final.md`
-- [ ] Explain the Railway certificate's hostname, validity and renewal, and how to check it: `README.md`
+- [x] Final DNS record list after Zoho (web, `www` redirect, MX, SPF, DKIM, DMARC, verification TXT), each with its purpose and the date: `cf dns records list`, saved to `docs/evidence/dns-final.md` — done: `docs/evidence/dns-final.md`, 2026-10-21
+- [x] Re-verify final HTTPS for `https://brandondong.me`, `http://www` and `https://www` today (status, certificate name, dates): `docs/evidence/dns-final.md` — done: `docs/evidence/dns-final.md`, 2026-10-21
+- [x] Explain the Railway certificate's hostname, validity and renewal, and how to check it: `README.md` — done: `docs/evidence/dns-final.md` Certificates; still to link from README
 
 ## 4. Railway / PostgreSQL migration (25 pts)
 
@@ -48,12 +48,12 @@ Audit against the Project 1 requirements, 2026-10-20, updated 2026-10-21. Each l
 
 - [ ] Record the diff review and local check for `a81cd86`, or mark it unverified: `docs/railway-migration-results.md` Verification
 - [ ] Rollback section covering code and database changes: `README.md`
-- [ ] Confirm no credentials are in Git history: `git log -p | grep -iE 'password=|postgresql://[^u]|secret'`, result noted in `docs/project-1-submission.md`
+- [x] Confirm no credentials are in Git history: `git log -p | grep -iE 'password=|postgresql://[^u]|secret'`, result noted in `docs/project-1-submission.md` — done: clean 2026-10-21 23:45 UTC; note still to add to the index
 
 ## 6. Zoho email (15 pts)
 
 - [ ] Create the header analysis the Zoho guide asks for: `docs/evidence/zoho-header-check.md`
-- [ ] Add the before-MX message line and what happened to it. If none was sent before 2026-10-13 21:11 UTC, say so and mark it not done: `docs/evidence/ex06.md` §1
+- [ ] Add the before-MX message line and what happened to it. If none was sent before the first MX record (2026-10-13 21:36:29 UTC), say so and mark it not done: `docs/evidence/ex06.md` §1
 - [ ] Record and explain the MX, SPF, DKIM and DMARC values, including the DMARC policy: `docs/evidence/ex06.md` §2
 - [ ] Link ex06 and the header check: `README.md`, `docs/project-1-submission.md`
 
