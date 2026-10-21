@@ -5,7 +5,7 @@ from app.main import app
 client = TestClient(app)
 
 
-def test_homepage_renders_profile_shell():
+def test_homepage_renders_when_no_profile_is_published():
     response = client.get('/')
     assert response.status_code == 200
-    assert 'Career Platform' in response.text
+    assert 'Profile not published yet.' in response.text

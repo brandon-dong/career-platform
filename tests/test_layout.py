@@ -6,7 +6,7 @@ from app.main import app
 client = TestClient(app)
 
 PAGES = ['/', '/about', '/experience', '/projects', '/skills', '/credentials', '/contact']
-BANNER = 'Profile view is in fallback mode while the database is unavailable.'
+BANNER = "The database can't be reached right now, so some content is temporarily unavailable."
 
 
 @pytest.mark.parametrize('path', PAGES)
@@ -28,16 +28,16 @@ def test_current_page_is_marked_in_nav(seeded):
 @pytest.mark.parametrize('path', PAGES)
 def test_every_page_survives_database_failure(broken_db, path):
     response = client.get(path)
-    assert response.status_code == 200
+    assert response.status_code == 503
     assert BANNER in response.text
     assert 'database unavailable' not in response.text
 
 
 @pytest.mark.parametrize('path', PAGES)
-def test_every_page_shows_fallback_when_no_profile(path):
+def test_every_page_renders_when_no_profile_is_published(path):
     response = client.get(path)
     assert response.status_code == 200
-    assert BANNER in response.text
+    assert BANNER not in response.text
 
 
 def test_footer_says_where_the_site_is_hosted(seeded):

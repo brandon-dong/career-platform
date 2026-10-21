@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>About</h1>
+{% if profile %}
 <p>{{ profile.summary }}</p>
 {% if profile.target_roles %}
 <h2>Target roles</h2>
@@ -8,4 +9,7 @@
 {% endif %}
 <h2>Location &amp; availability</h2>
 <p>{{ profile.location }}{% if profile.availability_status %} · {{ profile.availability_status }}{% endif %}</p>
+{% else %}
+<p class="empty">{{ 'Profile temporarily unavailable.' if db_error else 'Profile not published yet.' }}</p>
+{% endif %}
 {% endblock %}

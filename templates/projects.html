@@ -16,6 +16,6 @@
   {% endif %}
 </article>
 {% else %}
-<p class="empty">No projects listed yet.</p>
+<p class="empty">{{ 'Projects temporarily unavailable.' if db_error else 'No projects listed yet.' }}</p>
 {% endfor %}
 {% endblock %}

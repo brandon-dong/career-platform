@@ -20,15 +20,15 @@
     {% set page_label = (nav_links + [('/privacy', 'Privacy')])|selectattr('0', 'equalto', request.url.path)|map(attribute='1')|first if request.url.path != '/' else '' %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% if page_label %}{{ page_label }} · {% endif %}{{ profile.full_name }}</title>
-    <meta name="description" content="{{ profile.headline }}">
+    <title>{% if page_label %}{{ page_label }} · {% endif %}{{ site_name }}</title>
+    {% if profile %}<meta name="description" content="{{ profile.headline }}">{% endif %}
     <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="site-name" href="/">{{ profile.full_name }}</a>
+        <a class="site-name" href="/">{{ site_name }}</a>
         <nav aria-label="Main">
           {% for href, label in nav_links %}
           <a href="{{ href }}"{% if request.url.path == href %} aria-current="page"{% endif %}>{{ label }}</a>
@@ -37,14 +37,14 @@
       </div>
     </header>
     <main id="main" class="container" tabindex="-1">
-      {% if degraded %}
-      <p class="status-banner">Profile view is in fallback mode while the database is unavailable.</p>
+      {% if db_error %}
+      <p class="status-banner">The database can't be reached right now, so some content is temporarily unavailable.</p>
       {% endif %}
       {% block content %}{% endblock %}
     </main>
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span>&copy; 2026 {{ profile.full_name }} · Hosted on Railway</span>
+        <span>&copy; 2026 {{ site_name }} · Hosted on Railway</span>
         <span class="footer-links">
           <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
           <a href="{{ contact.linkedin }}">LinkedIn</a>

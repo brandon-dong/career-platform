@@ -40,9 +40,9 @@ def test_privacy_page_has_its_own_title(seeded):
     assert '<title>Privacy · Test Person</title>' in client.get('/privacy').text
 
 
-def test_privacy_page_survives_database_failure(broken_db):
+def test_privacy_page_stays_readable_during_database_failure(broken_db):
     response = client.get('/privacy')
-    assert response.status_code == 200
+    assert response.status_code == 503
     assert 'Google Analytics' in response.text
 
 

@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="hero">
+  {% if profile %}
   <h1>{{ profile.full_name }}</h1>
   <p class="headline">{{ profile.headline }}</p>
   <p class="meta">{{ profile.location }}{% if profile.availability_status %} · {{ profile.availability_status }}{% endif %}</p>
   <p>{{ profile.summary }}</p>
+  {% else %}
+  <h1>{{ site_name }}</h1>
+  <p class="empty">{{ 'Profile temporarily unavailable.' if db_error else 'Profile not published yet.' }}</p>
+  {% endif %}
   <p class="actions">
     <a class="button" href="mailto:{{ contact.email }}">Email me</a>
     <a class="button button-secondary" href="/experience">View experience</a>

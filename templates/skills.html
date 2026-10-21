@@ -7,6 +7,6 @@
   <p class="tags">{% for skill in group.list %}<span class="tag">{{ skill.name }}</span>{% endfor %}</p>
 </section>
 {% else %}
-<p class="empty">No skills listed yet.</p>
+<p class="empty">{{ 'Skills temporarily unavailable.' if db_error else 'No skills listed yet.' }}</p>
 {% endfor %}
 {% endblock %}

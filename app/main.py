@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,8 +9,8 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.config import CONTACT_EMAIL, GA_MEASUREMENT_ID, LINKEDIN_URL
 from app.formatting import format_month
+from app.models import Profile
 from app.routes.admin import router as admin_router
-from app.services.fallback_service import get_fallback_profile
 from app.services.profile_service import (
     get_active_profile,
     get_credentials,
@@ -31,23 +33,37 @@ templates.env.globals['contact'] = {'email': CONTACT_EMAIL, 'linkedin': LINKEDIN
 templates.env.globals['analytics_id'] = GA_MEASUREMENT_ID
 
 
+# The last profile read successfully, kept so the profile stays visible while the
+# database is down. Each process keeps its own copy, and a process that starts during
+# an outage has none. Only the profile is remembered: other sections show as
+# unavailable rather than serving stale rows.
+_last_good_profile = None
+
+
+def snapshot(profile: Profile) -> SimpleNamespace:
+    return SimpleNamespace(**{c.key: getattr(profile, c.key) for c in Profile.__table__.columns})
+
+
 def render_page(request: Request, template: str, **loaders):
+    global _last_good_profile
     db = SessionLocal()
     try:
         profile = get_active_profile(db)
-        if profile is None:
-            raise RuntimeError('No profile found')
         data = {name: load(db) for name, load in loaders.items()}
-        degraded = False
+        if profile is not None:
+            _last_good_profile = snapshot(profile)
+        db_error = False
     except Exception:
-        profile = get_fallback_profile()
+        profile = _last_good_profile
         data = {name: [] for name in loaders}
-        degraded = True
+        db_error = True
     finally:
         db.close()
+    site_name = profile.full_name if profile else request.url.hostname
     return templates.TemplateResponse(
         template,
-        {'request': request, 'profile': profile, 'degraded': degraded, **data},
+        {'request': request, 'profile': profile, 'site_name': site_name, 'db_error': db_error, **data},
+        status_code=503 if db_error else 200,
     )
 
 

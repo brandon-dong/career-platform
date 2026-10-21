@@ -18,6 +18,8 @@ def session_factory(tmp_path, monkeypatch):
     Base.metadata.create_all(bind=engine)
     factory = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     monkeypatch.setattr(app_main, 'SessionLocal', factory)
+    # Each test starts as a fresh process would: no remembered profile.
+    monkeypatch.setattr(app_main, '_last_good_profile', None, raising=False)
     yield factory
     engine.dispose()
 
@@ -64,16 +66,23 @@ def seeded(session_factory):
     db.close()
 
 
+class BrokenSession:
+    def query(self, *args, **kwargs):
+        raise RuntimeError('database unavailable')
+
+    def close(self):
+        pass
+
+
 @pytest.fixture
 def broken_db(monkeypatch):
-    class BrokenSession:
-        def query(self, *args, **kwargs):
-            raise RuntimeError('database unavailable')
-
-        def close(self):
-            pass
-
     monkeypatch.setattr(app_main, 'SessionLocal', BrokenSession)
+
+
+@pytest.fixture
+def break_db(monkeypatch):
+    """Call it mid-test to make every later request fail to reach the database."""
+    return lambda: monkeypatch.setattr(app_main, 'SessionLocal', BrokenSession)
 
 
 @pytest.fixture

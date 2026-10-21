@@ -15,6 +15,6 @@
   {% endif %}
 </article>
 {% else %}
-<p class="empty">No experience listed yet.</p>
+<p class="empty">{{ 'Experience temporarily unavailable.' if db_error else 'No experience listed yet.' }}</p>
 {% endfor %}
 {% endblock %}
