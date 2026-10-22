@@ -59,7 +59,7 @@ Audit against the Project 1 requirements, 2026-10-20, updated 2026-10-21. Each l
 
 ## 7. GA4 (10 pts)
 
-- [ ] Explain why the outbound click event is useful: `docs/evidence/ex06.md` §3
+- [x] Explain why the outbound click event is useful: `docs/evidence/ex06.md` §3 — done: written by Brandon
 - [x] Explain the collection path, browser → consent → gtag.js → `/g/collect` → Realtime, and what the checks prove: `docs/evidence/ex06.md` §3 — done: docs/diagrams/email-and-analytics.md
 
 ## 8. Engineering record (20 pts)
@@ -68,11 +68,11 @@ README (`README.md`):
 
 - [x] Commit `docs/diagrams/request-path.md` and link it from the README — done: linked from README Architecture
 - [x] Add the email path (sender → MX → Zoho; Zoho → recipient with SPF/DKIM/DMARC) and the analytics path (browser → Google) to the diagrams: `docs/diagrams/` — done: docs/diagrams/email-and-analytics.md
-- [ ] Rewrite the Claude-drafted Railway decision in your own words: `README.md` Decision
-- [ ] Add the managed vs self-hosted email decision with the alternatives and reasons: `README.md`
+- [x] Rewrite the Claude-drafted Railway decision in your own words: `README.md` Decision — done: drafted by Claude, edited by Brandon (reliability point added)
+- [x] Add the managed vs self-hosted email decision with the alternatives and reasons: `README.md` — done: written by Brandon
 - [x] Failures section linking `docs/evidence/ex03.md` (app/database: empty database) and `docs/evidence/ex05.md` (DNS/TLS): `README.md` — done: README Failures I investigated
 - [x] Restructure ex03's failure as symptom, checks, diagnosis, repair, repeated check: `docs/evidence/ex03.md` §3 — done: structured summary in README; ex03 itself left unchanged
-- [ ] Reflection: what you understand better, what you'd change: `README.md`
+- [x] Reflection: what you understand better, what you'd change: `README.md` — done: written by Brandon
 - [x] Remaining limitations in one place (no fallback host, unmanaged Postgres backups, Junk filtering, unverified Azure checks): `README.md` — done: README Limitations
 - [x] Service inventory: compute vs retained storage vs other billables, with renewal or expiry dates and cleanup plans (Railway web + Postgres volume, domain at Namecheap, registered 2026-10-01, expires 2027-10-01, Cloudflare, Zoho Free, GA4, Azure deleted 2026-10-16): `README.md` Costs — done: README Costs table
 - [x] Re-check Railway's remaining credit and days, and record the date: `README.md` Costs — done: $0.59 used, 2026-10-22 00:18 UTC

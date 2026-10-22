@@ -94,19 +94,17 @@ I took an online SQLite backup on the VM and checked that it reads. Then I copie
 
 ### Should a three-developer startup move from an Azure VM to Railway?
 
-> **DRAFT, written by Claude from this migration's evidence. Brandon: edit this into your own argument before submitting.**
-
-**Recommendation: move, but keep the exit open.**
+**Recommendation: move to Railway, but keep the exit open.**
 
 - **Cost:** Railway used about $0.17 in four days for a small web service plus Postgres. A small Azure VM costs a fixed monthly amount whether it's busy or idle. At this size Railway is cheaper in money. The bigger saving is time.
 - **Our hours:** the Azure path took two sessions of firewall rules, nginx, systemd, Certbot and renewal timers. On Railway the same result took one domain and two DNS records, and each update is now a `git push`. For three developers, those hours belong on the product.
-- **Control:** we give up the OS, the proxy configuration and the TLS details. In return Railway's choices become our constraints: a deprecated config-as-code format, one custom domain on the trial, and egress billing on the database proxy.
-- **Reliability:** Railway restarts failed deploys, keeps the old deploy serving while a new one builds, and refuses a deploy whose health check fails. The VM had one process supervisor and one machine. But Postgres on Railway is unmanaged, so backups are still on us.
+- **Control:** we give up the OS, the proxy configuration and the TLS details. In return Railway's choices become our constraints: a deprecated config-as-code format, one custom domain on the trial, and billing on the database proxy.
+- **Reliability:** Railway restarts failed deploys, keeps the old deploy serving while a new one builds, and refuses a deploy whose health check fails. The VM had one process supervisor and one machine. But Postgres on Railway is unmanaged, so backups are still on us. One issue is that Railway can stop builds at times, and this is entirely out of our control. With Azure, we are managing our own server essentially, so whether the VM is up and running is dependent on us. This, in my opinion, is a downside of Railway.
 - **What would change my answer:** data-residency or compliance rules that need our own network, steady high traffic where usage pricing beats nothing, or a need for anything Railway doesn't run, like custom kernels or GPUs. A second region on a paid plan would also change the cost picture.
 
 ### Managed email (Zoho) or running my own mail server?
 
-> **TO WRITE (Brandon), in your own words.** The requirements count the version you wrote in class. Cover the alternatives you considered (for example running a mail server on the VM, or using another provider), what you chose, and why.
+I like the convenience of Zoho, similar to why I would choose Railway over Azure for application hosting, so I would choose Zoho. However, I never really tried the email server that comes with Microsoft 365. I can imagine that for some companies which prefer the vertical integration of Microsoft products, this could be an advantage. Additionally, we have had some issues with sending emails via Zoho, although I believe this has more to do with the domain that I am registered under. After troubleshooting some email settings with Claude Code, it seems that my Microsoft email is automatically moving emails from my Zoho email to the spam folder, as there was nothing in the email headers that suggested there was a missing setup or certificate on the Zoho end. If I'm using an email that is verified on a Microsoft product, like Azure, I wonder if Microsoft Outlook would automatically move the email as well. To the convenience point, Zoho is able to handle spam filtering, sender reputation, and TLS, whereas if I were to use Postfix on the VM, I would have had to do all of that myself. 
 
 ## Failures I investigated
 
@@ -157,7 +155,7 @@ After the trial, Railway's Free plan allows no custom domain, so the site needs 
 
 ## Reflection
 
-> **TO WRITE (Brandon), in your own words:** what you understand better now, and what you would change.
+I understand the different parts of my site better. I know that Railway is where we are hosting the application, and that it runs the code by being connected to my GitHub Repository. I understand the limitations and benefits of Railway over Azure, which is where we originally hosted our application. Going through all of the manual steps of Azure made me realize why IaaS, PaaS, and SaaS products are successful, but additionally, it made me understand the power of a CLI or MCP in combination with a coding agent. In a way, if you prefer control and personalization, I can see how using a coding agent with access to the Azure CLI can be just as effective as Railway. If I were to change something, I would back up Postgres, maybe in a docker container, as my only copy is in Railway's database. 
 
 ## History: Azure VM (Sept–Oct 2026)
 
