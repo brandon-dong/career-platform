@@ -14,15 +14,15 @@ Audit against the Project 1 requirements, 2026-10-20, updated 2026-10-21. Each l
 
 ## 1. Profile and project data (15 pts)
 
-- [x] Pages return HTTP 503 when the database fails: `app/main.py` `render_page`, with a test in `tests/test_pages.py` — done: commit `7c4fce6`; Railway deploy not yet confirmed
+- [x] Pages return HTTP 503 when the database fails: `app/main.py` `render_page`, with a test in `tests/test_pages.py` — done: commit `7c4fce6`; Railway deploy blocked by Railway's 2026-10-21 outage (see `docs/railway-migration-results.md`)
 - [x] Real profile stays visible on database failure instead of the invented fallback profile: `app/services/fallback_service.py`, `app/main.py` — done: commit `7c4fce6`
 - [x] Database failure shows "Projects temporarily unavailable", distinct from the empty-table message: `templates/projects.html` — done: commit `7c4fce6`
-- [ ] Record a database-down → recovered-without-restart check, with date and result: new section in `docs/railway-migration-results.md`
+- [x] Record a database-down → recovered-without-restart check, with date and result: new section in `docs/railway-migration-results.md` — done: local check 2026-10-21 in `docs/railway-migration-results.md`; Railway check still to do (below)
 - [ ] Add a clearly labeled "this website, in progress" project entry: Railway Postgres `projects` table
 
 ## 2. Azure deployment (20 pts)
 
-- [ ] Record the instructor's approval and date for decommissioning the VM: `docs/railway-migration-results.md` "Azure VM decommissioned" and `README.md`
+- [x] Record the instructor's approval and date for decommissioning the VM: `docs/railway-migration-results.md` "Azure VM decommissioned" and `README.md` — done: verbal, about 2026-10-13, recorded in both files
 - [ ] Mark the controlled VM restart test as unverified (never run, VM now decommissioned): `docs/superpowers/plans/2026-10-01-operate-the-vm.md` Verify results
 - [ ] Explain which parts needed configuration to survive a restart (`systemctl enable`, `Restart=always`, nginx enabled plus its restart drop-in, absolute `DATABASE_URL`), labeled written afterward: `README.md` Azure section
 - [ ] Record the VM's private IP, or mark it unverified: `docs/evidence/ex03.md` §1
@@ -74,7 +74,7 @@ README (`README.md`):
 - [ ] Restructure ex03's failure as symptom, checks, diagnosis, repair, repeated check: `docs/evidence/ex03.md` §3
 - [ ] Reflection: what you understand better, what you'd change: `README.md`
 - [ ] Remaining limitations in one place (no fallback host, unmanaged Postgres backups, Junk filtering, unverified Azure checks): `README.md`
-- [ ] Service inventory: compute vs retained storage vs other billables, with renewal or expiry dates and cleanup plans (Railway web + Postgres volume, domain registration renewal date, Cloudflare, Zoho Free, GA4, Azure deleted 2026-10-16): `README.md` Costs
+- [ ] Service inventory: compute vs retained storage vs other billables, with renewal or expiry dates and cleanup plans (Railway web + Postgres volume, domain at Namecheap, registered 2026-10-01, expires 2027-10-01, Cloudflare, Zoho Free, GA4, Azure deleted 2026-10-16): `README.md` Costs
 - [ ] Re-check Railway's remaining credit and days, and record the date: `README.md` Costs
 - [ ] Link the original spec and plans (`docs/superpowers/specs/`, `docs/superpowers/plans/`): `README.md`
 
@@ -89,6 +89,14 @@ Submission index (`docs/project-1-submission.md`), in the order the requirements
 - [ ] 6. Zoho sending, receiving, replying, and DNS authentication evidence (ex06, zoho-header-check)
 - [ ] 7. GA4 page-view and interaction evidence, with the explanation
 - [ ] 8. README sections or records for failures, decisions, reflection, costs and limitations
+
+## Blocked by Railway's outage (from 2026-10-21 07:24 UTC)
+
+- [ ] When builds resume for Trial plans, confirm Railway deploys `7c4fce6` or later: `railway deployment list`
+- [ ] Rerun the database outage check on Railway and record it: `docs/railway-migration-results.md`
+- [ ] Rotate `ADMIN_PASSWORD` and the Postgres password (variable and database role together), then redeploy: Railway service variables
+- [ ] If builds aren't back by submission, say in the index that the live site runs `ddf2f03`, not the submitted SHA: `docs/project-1-submission.md`
+- [ ] Consider a short note to the instructor before 1:45 PM naming the commit and the incident link
 
 ## Submit
 
