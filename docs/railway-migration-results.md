@@ -45,6 +45,10 @@ DNS was changed at 21:48 UTC on 2026-10-12 with the Cloudflare CLI (`cf`):
 
 Certificate status: **issued.** Railway staff re-triggered verification after a support request, and on 2026-10-13 02:57 UTC `https://brandondong.me` served `CN=brandondong.me` (Let's Encrypt YE2) with HTTP 200. Before that it was pending. Railway reported "Waiting for DNS update" on the TXT record while public resolvers already returned the correct value. The zone's negative-cache TTL is 30 minutes. Investigation: [evidence/ex05.md](evidence/ex05.md).
 
+### Review of the update test (`a81cd86`)
+
+*Written afterward (2026-10-21), from the Claude Code session transcript of 2026-10-12.* At 22:00:03–22:00:08 UTC the agent added `test_footer_says_where_the_site_is_hosted` and changed the footer in `templates/base.html`. At 22:00:10 it ran the full test suite on my laptop (`86 passed, 2 skipped`) and committed in the same command, then pushed. Railway started building `a81cd86` as deployment `74e886c2` at 22:00:30. **Local tests before the push: verified. A human review of the diff before committing: unverified**, because the test run and the commit happened in one step with no recorded review.
+
 ## Database failure handling (commit `7c4fce6`, 2026-10-21)
 
 Commit `7c4fce6` makes every page return HTTP 503 when the database can't be reached, keeps the last profile read successfully visible, and shows "Projects temporarily unavailable" instead of the empty-table message. Before it, pages returned 200 with an invented fallback profile. Tests: `tests/test_degraded.py` (16 of its 18 tests failed before the change, all pass after; full suite 137 passed, 2 Postgres-only skipped).

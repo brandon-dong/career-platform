@@ -46,7 +46,7 @@ Audit against the Project 1 requirements, 2026-10-20, updated 2026-10-21. Each l
 
 ## 5. Reviewed change through Railway (5 pts)
 
-- [ ] Record the diff review and local check for `a81cd86`, or mark it unverified: `docs/railway-migration-results.md` Verification
+- [x] Record the diff review and local check for `a81cd86`, or mark it unverified: `docs/railway-migration-results.md` Verification — done: local tests verified from the 10-12 transcript; human diff review unverified
 - [ ] Rollback section covering code and database changes: `README.md`
 - [x] Confirm no credentials are in Git history: `git log -p | grep -iE 'password=|postgresql://[^u]|secret'`, result noted in `docs/project-1-submission.md` — done: clean 2026-10-21 23:45 UTC; note still to add to the index
 
