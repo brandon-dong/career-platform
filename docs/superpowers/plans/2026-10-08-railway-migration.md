@@ -755,13 +755,15 @@ Each step has **Where / Do / Why / Check / Undo**, like the Azure plans. Real va
 
 ### Results
 
+*Filled in 2026-10-21 from `railway status --json` and [railway-migration-results.md](../../railway-migration-results.md), where the run's full results were recorded on 2026-10-12.*
+
 | Item | Value |
 |---|---|
-| Postgres service name / version (R1) | |
-| Web service source repo / branch (R1) | |
-| Build used uv + Python 3.12 (R7) | |
-| Public domain (R8) | |
-| R8 checks all passed (date) | |
+| Postgres service name / version (R1) | `Postgres`, image `ghcr.io/railwayapp-templates/postgres-ssl:18` |
+| Web service source repo / branch (R1) | `brandon-dong/career-platform`, `main` |
+| Build used uv + Python 3.12 (R7) | Unverified: the build log wasn't saved. Builder is Railpack (`railway status`) |
+| Public domain (R8) | `career-platform-production-17c6.up.railway.app`, then `brandondong.me` |
+| R8 checks all passed (date) | Yes, recorded in the results file's Verification table (2026-10-12) |
 
 ## Out of scope (decide separately)
 

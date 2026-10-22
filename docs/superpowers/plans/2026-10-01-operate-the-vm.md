@@ -297,6 +297,9 @@ Then start it by hand again with migration plan step Pr1 if needed. In the porta
 | Task 4 public site | Laptop | `200`, 0 fallback, CSS `200` | `200`, 0, CSS `200`; all 7 pages `200` | 2026-10-01 |
 | Task 4 8000 closed | Laptop | `000` | `000` | 2026-10-01 |
 | Task 4 browser | Laptop | real profile, no banner | Pending (owner) | |
+| Controlled VM restart (owner, outside this plan) | Laptop + VM | site returns after `az vm restart` with no manual steps | **Unverified.** No restart test was recorded. The VM was deleted on 2026-10-16, so it can't be run now. *(Added 2026-10-21.)* | |
+| VM private IP | Portal | recorded | **Unverified.** Never recorded before the VM was deleted. *(Added 2026-10-21.)* | |
+| NSG rule for 443 (added for HTTPS on 2026-10-06) | Laptop | `Allow-HTTPS` 443 from any | **Unverified.** HTTPS worked from outside on 2026-10-06/07 ([how-this-site-is-secured.md](../../how-this-site-is-secured.md)), so 443 was open, but no rule listing was saved. *(Added 2026-10-21.)* | |
 
 ## Run log (2026-10-01)
 

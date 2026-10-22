@@ -22,6 +22,25 @@ Comparison, VM backup vs Railway, read back independently. Rows were matched by 
 
 Both sides had the same seven tables. The VM's live database still hashed the same as the backup after the transfer, so nothing changed on the VM during the move.
 
+**Not done: a deliberate change to the source data.** The requirements ask for at least one real change made to the original project data before the move, so that restoring seed data couldn't pass as a transfer. I didn't make one. The rows on the VM were still the ones loaded from my resume on 2026-09-29, so re-running the resume loader would likely have produced the same hashes. The skill added on Railway afterward ("Cloudflare DNS", below) was a write test after the copy, not a change to the source. *(Written afterward, 2026-10-21.)*
+
+**Not done: a side-by-side comparison of the rendered page.** The Railway page was checked on its own (Verification below), but I didn't save the VM's page and the Railway page and compare them. *(Written afterward, 2026-10-21.)*
+
+### What Git moved, and what needed another method
+
+*Written afterward (2026-10-21), from the plan and the commits.*
+
+| Needed on Railway | How it got there |
+|---|---|
+| Application code, templates, static files, tests | Git: Railway builds each push to `main` |
+| Python version and packages | Git: `.python-version` (3.12), `pyproject.toml` and `uv.lock`; Railpack installs from them (`08da8ed` removed the conflicting `requirements.txt`) |
+| PostgreSQL support | Git: `psycopg2-binary` in the lock file, engine settings in `database.py` (`08da8ed`, `98d198f`) |
+| Schema | Git: SQLAlchemy models; `scripts/copy_to_postgres.py` creates the tables in Postgres |
+| Current data | **Not Git.** An online SQLite backup on the VM, copied into Postgres by `scripts/copy_to_postgres.py` through Railway's temporary public TCP proxy, then compared table by table (above) |
+| Secrets (`ADMIN_PASSWORD`, `DATABASE_URL`) | **Not Git.** Railway service variables; `DATABASE_URL` is a reference to the Postgres service |
+| Start command, health check path, restart policy | **Not Git.** Railway service settings in the dashboard (`railway.json` is deprecated) |
+| Domain, DNS records, certificate | **Not Git.** Custom domain in Railway; `@` CNAME and `_railway-verify` TXT in Cloudflare; Railway issued the certificate |
+
 ## Verification
 
 | Check | Result |
