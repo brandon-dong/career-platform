@@ -32,7 +32,7 @@ def test_privacy_page_explains_analytics_choices(seeded):
     response = client.get('/privacy')
     assert response.status_code == 200
     assert '<h1>Privacy</h1>' in response.text
-    for phrase in ['Google Analytics', 'outbound', 'Railway', 'Decline', 'withdraw']:
+    for phrase in ['Google Analytics', 'outbound', 'Amazon Web Services', 'Decline', 'withdraw']:
         assert phrase in response.text
 
 

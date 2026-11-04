@@ -21,7 +21,7 @@ from app.services.profile_service import (
 from database import SessionLocal
 
 app = FastAPI(title='Career Platform')
-# Railway ends HTTPS at its edge and forwards plain HTTP. Trusting its
+# Nginx ends HTTPS on the instance and forwards plain HTTP over localhost. Trusting its
 # X-Forwarded-Proto header makes url_for() build https:// links.
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts='*')
 app.mount('/static', StaticFiles(directory='static'), name='static')

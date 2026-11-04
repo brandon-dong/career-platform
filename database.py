@@ -7,7 +7,7 @@ from app.config import DATABASE_URL
 def engine_kwargs(url: str) -> dict:
     if url.startswith('sqlite'):
         return {'connect_args': {'check_same_thread': False}, 'future': True}
-    # pool_pre_ping replaces connections that Postgres or Railway's network closed while idle.
+    # pool_pre_ping replaces connections that Postgres or the network closed while idle.
     # connect_timeout lets an unreachable host fail in seconds, so pages fall back instead of hanging.
     return {'connect_args': {'connect_timeout': 10}, 'pool_pre_ping': True, 'future': True}
 

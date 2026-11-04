@@ -42,4 +42,4 @@ def test_every_page_renders_when_no_profile_is_published(path):
 
 def test_footer_says_where_the_site_is_hosted(seeded):
     footer = client.get('/').text.split('<footer', 1)[1]
-    assert 'Hosted on Railway' in footer
+    assert 'Hosted on AWS' in footer
