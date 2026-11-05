@@ -103,13 +103,15 @@ Tested at `https://aws.brandondong.me` while Railway still served the domain, th
 | Reboot | Back in 22 seconds with no manual steps |
 | Database cut off, with a fresh app process | Pages return 503 in about 10 seconds, no hang |
 | Database restored | 200 within seconds, no app restart |
+| Crash: `kill -9` on uvicorn | 502 for a few seconds, then systemd restarted it and `/healthz` returned 200 within 6 seconds |
+| App stopped | Nginx stayed up and returned `502 Bad Gateway`, with `Connection refused` in its error log |
 | Exposure from my laptop | Bare IP, unknown hostnames, port 8000 and RDS port 5432 are closed |
 | Read-only role | Update, delete and create table are refused |
 | Backup path | Dumped from RDS, copied to my laptop, restored locally; all 7 tables matched |
 | Certificate renewal | `certbot renew --dry-run` succeeded for both names |
-| After cutover | Public resolvers return the Elastic IP; pages 200 on the root domain; HTTP and `www` redirect; only the root record changed, plus the added `aws` record; mail records intact |
+| After cutover | Public resolvers return the Elastic IP; pages 200 on the root domain; HTTP and `www` redirect; only the root record changed, plus the added `aws` record; mail records intact; test emails delivered in both directions through Zoho (outgoing landed in Junk at my LMU mailbox, the known issue below); certificate fingerprint in my browser matched the server |
 
-**Not verified:** a real test email through Zoho after cutover, and a restore from RDS automated backups.
+**Not verified:** a restore from RDS automated backups.
 
 ## Backups and rollback
 
@@ -263,14 +265,14 @@ Also recorded: the Railway migration plan's 11 compatibility findings and how ea
 | Google Analytics 4 | Analytics | SaaS | $0 | n/a | Remove the tag (`GA_MEASUREMENT_ID=""`) if no longer wanted |
 | Azure VM, disk, static IP | Previous host | Compute + retained storage | About $6/month for the IP and disk while deallocated, before deletion | Deleted 2026-10-16 | Done. Only `NetworkWatcher_northcentralus` remains, which doesn't bill |
 
-**AWS total: about $26.82/month** (2026-11-03 us-east-1 public prices, 730 hours), or about $33 if traffic and backups run high. This is an estimate, not a bill. My monthly budget alert is set at $10, so it will fire about 11 days into a full month. The account is on the paid plan, so this is real money unless credits apply. Alerts aren't a spending cap.
+**AWS total: about $26.82/month** (2026-11-03 us-east-1 public prices, 730 hours), or about $33 if traffic and backups run high. This is an estimate, not a bill. My monthly budget alert is set at $10, so it will fire about 11 days into a full month. The account is on the paid plan with no credits (Billing → Credits showed $0.00 on 2026-11-05), so this is real money. Alerts aren't a spending cap.
 
 ## What's next
 
-- [ ] Send a test email through Zoho and confirm delivery.
+- [x] Send test emails through Zoho in both directions.
 - [ ] Rotate `ADMIN_PASSWORD`, unless it was already rotated after the Railway incident.
 - [ ] Delete the Railway project once I'm confident in AWS, and no later than when the trial ends.
-- [ ] Check the Credits page and set a budget amount that means something at this cost.
+- [ ] Set a budget amount that means something at this cost.
 - [ ] Run the weekly export, and consider automating it.
 - [ ] Test a point-in-time restore of RDS.
 - [ ] At the end of the semester, decide whether to keep paying, move to a cheaper host or delete the site.
