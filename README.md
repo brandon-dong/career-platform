@@ -279,7 +279,29 @@ Also recorded: the Railway migration plan's 11 compatibility findings and how ea
 
 ## Reflection
 
+**Railway migration:**
+
 I understand the different parts of my site better. I know that Railway is where we are hosting the application, and that it runs the code by being connected to my GitHub Repository. I understand the limitations and benefits of Railway over Azure, which is where we originally hosted our application. Going through all of the manual steps of Azure made me realize why IaaS, PaaS, and SaaS products are successful, but additionally, it made me understand the power of a CLI or MCP in combination with a coding agent. In a way, if you prefer control and personalization, I can see how using a coding agent with access to the Azure CLI can be just as effective as Railway. If I were to change something, I would back up Postgres, maybe in a docker container, as my only copy is in Railway's database. 
+
+**AWS migration:**
+
+We've migrated from Railway to AWS. We used the Cloudflare CLI to change the root record from a CNAME pointing at Railway to an A record pointing at the EC2 (essentially a VM for AWS).
+
+When setting up the AWS account, we set up both a root user and an IAM user. The root user is the actual account, and it has access and permissions to manage all parts of my AWS account. The root account was used for creating the user, attaching policies to the IAM user, and checking billing/credit info. In my case, I'm on the paid plan, so there are no credits to be looked at. The IAM user (isba-student) is, in a way, another user attached to the root account. There is a different way of logging in to the IAM user, as you type in the username and password to get into the IAM account, whereas root account requires the email and password. Both have MFA with a passkey that I keep in my personal iPhone's password manager application. The IAM user only has access to certain policies that I allowed for it (via the root account), so it can't see billing, use S3, or change its own permissions. This is the one that we're using to do work mostly. Especially when using AI, it's important to limit the amount of damage that it can do, so having it use the AWS CLI with only the permissions granted on the IAM user is a good way of mitigating risk. 
+
+Something else worth mentioning is the region settings on AWS. In class, we saw why that mattered, as when we were on the root account setting up the IAM policies, we were working on the US East 1 Northern Virginia Region. When we went back to the IAM user, we were working on the US East 2 region, and the IAM user didn't have the create database permissions which we intended, because it was using a different region than the region specified while setting up the policies on the root user.
+
+In terms of architecture, we essentially kept it the same as how we worked on Railway. Instead of having a local database file within our VM, or setting up PostgreSQL in the same container as the VM or EC2, we set up an RDS database with a read only database user to separate failures and mitigate security risk if our EC2 got hacked.
+
+Some measures that we took along the way when migrating were first backing up the data. We restored a backup of the database in a Docker container first to prove that the backup worked. We also checked that all the data got moved properly, with all 7 tables matching by row count and content hash.
+
+I also created a cloud backup of my data on a private Google Drive folder, which allows for a backup in case of my local device being hacked/destroyed. For SSH, we only allow that from my IP, and the SSH has a new key with a passphrase. I made sure that the passphrase never entered the Claude chat, and also ensured it didn't end up in the public repo.
+
+Some things that I have to manage now, compared to with Railway are the Operating System, NGINX, HTTPS certificates, and deploying. A push to main no longer updates the site, because Railway read directly through a connection to my GitHub, while AWS does not. On the other hand, AWS now handles the database server, patching, and automated backups.
+
+In terms of testing the new site, I tested a reboot, crash, and database outage. A timeout is the network or firewall, 502 gateway is the app, and 503 service unavailable is the database. In terms of cutover, DNS moved first, and then certbot via NGINX was able to verify the domain. Zoho was not affected because mail uses MX records, not the A record, which I tested in Inbound and Outbound emails.
+
+Something I also considered was the case if I had given someone my old https://brandondong.me link: I was wondering if it would point to a dead Railway site when my Railway trial expires, or if it would point at AWS. I realized that if the link I gave them was that https://brandondong.me link, it would simply be sent to the AWS site because of the Cloudflare A record. 
 
 ## History: Railway (Oct–Nov 2026)
 
