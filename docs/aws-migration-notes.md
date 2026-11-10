@@ -376,8 +376,8 @@ README updated for AWS with a Mermaid architecture diagram, and checked with the
 My AWS account ID and home IP addresses are left out of this file because the repository is public.
 
 **Open items**
-- [ ] RDS and EC2 console checks, and the Cloudflare dashboard check
+- [x] RDS, EC2 and Cloudflare console checks: everything matched (confirmed 2026-11-09)
 - [x] Talked to my instructor about having no AWS credits. It's fine: I'll pay for the site and keep it running
 - [ ] Rotate `ADMIN_PASSWORD`, unless it was already rotated after the Railway incident
-- [ ] Check the first real figures on the Bills page, and confirm an RDS snapshot that includes the data
+- [x] Bills page: $0.65 month-to-date on 2026-11-05, while cost data was still catching up. RDS snapshots: daily at 04:01 UTC, the first with my data on 2026-11-05; 7 encrypted snapshots on 2026-11-09, point-in-time restore available to within minutes
 - [ ] Explain the diagram to a classmate
